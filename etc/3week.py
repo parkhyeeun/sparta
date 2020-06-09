@@ -10,7 +10,7 @@ sounds = soup.select('#body-content > div.newest-list > div > table > tbody > tr
 
 
 for sound in sounds:
-        rank = sound.select_one('td.number').text[0:2]
+        rank = sound.select_one('td.number').text[0]
         title = sound.select_one('td.info > a.title.ellipsis').text.strip()
         artist = sound.select_one('td.info > a.artist.ellipsis').text
         print(rank,title,artist)
