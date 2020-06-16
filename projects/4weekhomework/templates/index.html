@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>4주차 숙제</title>
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+
+    <style>
+         * {
+            font-family: 'Gamja Flower', cursive;
+        }
+
+        .myitem {
+            background-image: url('https://image.msscdn.net/images/goods_img/20200120/1276489/1276489_1_500.jpg');
+            width: 500px;
+            height: 300px;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+
+            width: 500px;
+            height: 350px;
+        }
+
+        .price {
+            font-size: 16px;
+        }
+
+        .description-box {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .order-box {
+            width: 500px;
+        }
+
+        .btn-box {
+            width: 500px;
+            text-align: center;
+        }
+
+        .wrap {
+            width: 500px;
+            margin: auto;
+        }
+
+        .enko {
+            color: blue;
+            padding-bottom: 10px;
+        }
+
+
+        .orders {
+            width: 500px;
+            margin: 50px auto auto auto;
+            text-align: center;
+        }
+    </style>
+
+
+    <script>
+
+        $(document).ready(function () {
+
+            $.ajax({
+                type: "GET",
+                url: "https://api.manana.kr/exchange/rate.json",
+                data: {},
+                success: function (response) {
+                    let en_ko = (response[1]["rate"]);
+                    let temp_html = `달러-원 환율:${en_ko}`
+                    $('#exchange').append(temp_html);
+                }
+            })
+
+            $('#orders-box').html('');
+            listing();
+
+        });
+
+        function q1() {
+            let name = $('#input_name').val();
+            let howmany = $('#inputGroupSelect01').val();
+            let address = $('#input_address').val();
+            let phone = $('#input_number').val();
+
+            if (name == '') {
+                alert('이름을 입력하세요');
+                return
+            }
+            else if (howmany == '-- 수량을 선택하세요 --') {
+                alert('수량을 선택하세요');
+                return
+            }
+            else if (address == '') {
+                alert('주소을 입력하세요');
+                return
+            }
+            else if (phone == '') {
+                alert('전화번호를 입력하세요');
+                return
+            }
+
+            $.ajax({
+                type: 'POST', // 타입을 작성합니다.
+                url: '/reviews', // url을 작성합니다.
+                data: { name_give: name, howmany_give: howmany, address_give: address, phone_give: phone }, // data를 작성합니다. },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        alert(response['msg']);
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+
+        function listing() {
+            // 1. 리뷰 목록을 서버에 요청하기
+            // 2. 요청 성공 여부 확인하기
+            // 3. 요청 성공했을 때 리뷰를 올바르게 화면에 나타내기
+            $.ajax({
+                type: "GET",
+                url: "/reviews",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+
+                        let orders = response['all_review']
+                        for (let i = 0; i < orders.length; i++) {
+                            let name = orders[i]['name']
+                            let howmany = orders[i]['howmany']
+                            let address = orders[i]['address']
+                            let phone = orders[i]['phone']
+
+                            let temp_html = `<tr>
+                            <td>${name}</td>
+                            <td>${howmany}</td>
+                            <td>${address}</td>
+                            <td>${phone}</td>
+                            </tr>`
+                            
+                            $('#orders-box').append(temp_html);
+                        }
+
+                    } else {
+                        alert('리뷰를 받아오지 못했습니다');
+                    }
+                }
+            });
+        }
+
+
+    </script>
+
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="myitem"></div>
+        <div class="description-box">
+            <h1>컨베이지 틴캔들 <span class="price">가격: 12,000원/개</span></h1>
+            <p>전문 조향사가 엄격한 검수를 통하여 핸드메이드로 직접 제작한 프리미엄 캔들입니다.
+                검증된 성분과 최상급 향으로 당신만을 위한 퍼퓸을 소장하세요.</p>
+        </div>
+
+        <h5 id="exchange" class="enko"></h5>
+
+        <div class="order-box">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">주문자성함</span>
+                </div>
+                <input type="text" class="form-control" id="input_name" aria-describedby="basic-addon3">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">수량</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect01">
+                    <option selected>-- 수량을 선택하세요 --</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="3">4</option>
+                </select>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">주소</span>
+                </div>
+                <input type="text" class="form-control" id="input_address" aria-describedby="basic-addon3">
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon3">전화번호</span>
+                </div>
+                <input type="text" class="form-control" id="input_number" aria-describedby="basic-addon3">
+            </div>
+        </div>
+        <div class="btn-box">
+            <button onclick="q1()" type="button" class="btn btn-primary">주문하기</button>
+        </div>
+    </div>
+    <div class="orders">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">이름</th>
+                    <th scope="col">주소</th>
+                    <th scope="col">수량</th>
+                    <th scope="col">전화번호</th>
+                </tr>
+            </thead>
+            <tbody id="orders-box">
+                <tr>
+                    <td>Otto</td>
+                    <td>@mdo</td>
+                    <td>@mdo</td>
+                    <td>@mdo</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    </div>
+</body>
+
+</html>
